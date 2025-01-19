@@ -6,7 +6,7 @@ import re
 import webbrowser  # 导入用于打开浏览器的模块
 
 # 支持的所有哈希算法
-SUPPORTED_ALGORITHMS = ['md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512', 'blake2b', 'blake2s']
+SUPPORTED_ALGORITHMS = ['md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512']
 
 # 定义哈希计算函数
 def calculate_hash(filename, algorithm='md5'):
@@ -95,36 +95,10 @@ def detect_hash_algorithm(hash_value, lines=None):
     hash_length = len(hash_value)
     detected_algorithm = length_to_algorithm.get(hash_length)
 
-    if not detected_algorithm and hash_length == 128:
-        # 如果哈希值长度为128，尝试区分 blake2b 和 sha512
-        detected_algorithm = 'blake2b' if is_blake2b_format(lines) else 'sha512'
-
-    if not detected_algorithm and hash_length == 64:
-        # 如果哈希值长度为64，尝试区分 blake2s 和 sha256
-        detected_algorithm = 'blake2s' if is_blake2s_format(lines) else 'sha256'
-
     if not detected_algorithm:
         return None
 
     return detected_algorithm
-
-# 辅助函数：判断是否为 blake2b 格式
-def is_blake2b_format(lines):
-    """检查哈希文件是否有特定标识表明使用了 blake2b 算法"""
-    if lines:
-        for line in lines:
-            if 'blake2b' in line.lower():
-                return True
-    return False
-
-# 辅助函数：判断是否为 blake2s 格式
-def is_blake2s_format(lines):
-    """检查哈希文件是否有特定标识表明使用了 blake2s 算法"""
-    if lines:
-        for line in lines:
-            if 'blake2s' in line.lower():
-                return True
-    return False
 
 # 对比哈希值
 def compare_hashes():
